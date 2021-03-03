@@ -1,6 +1,6 @@
-# Color Search
+# Color Search 
 
-This code accompanies the _"Extracting, encoding, and comparing colour for search and discovery in image collections."_ MSc thesis.
+This code accompanies the _"Extracting, encoding, and comparing colour for search and discovery in image collections."_ MSc thesis by Lianyuan.
 
 ## Requirements
 
