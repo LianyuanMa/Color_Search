@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import json
 
 app = FastAPI()
-
 templates = Jinja2Templates(directory="./HTML")
 
 @app.get("/", response_class=HTMLResponse)
