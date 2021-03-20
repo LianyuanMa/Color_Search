@@ -1,5 +1,4 @@
 from typing import Optional
-
 from fastapi import FastAPI, Request, Header
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -7,9 +6,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import numpy as np
-import matplotlib.pyplot as plt  # 用于画图
-
-
+import matplotlib.pyplot as plt
 import json
 
 app = FastAPI()
