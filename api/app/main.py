@@ -29,7 +29,6 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
     rgblist = [] #the variable name is gray. Is it necessary to declare the variable before use?
     rgblist = image.split();
 
-
     rgbdict = {}
     sortedarrary = [x for x in range(256)] #used for zipping 2 lists. A waste of storage space?
     signlist = ['red', 'green', 'blue'] #used for naming the list elements. Also a waste?
