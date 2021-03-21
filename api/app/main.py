@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+#uvicorn main:app --reload
 app = FastAPI()
 templates = Jinja2Templates(directory="./HTML")
 
@@ -22,7 +23,7 @@ def url_post(request: Request):
 
 @app.get("/image/rgbdata/")
 async def read_items(image_url: Optional[str] = Header(None)): #fastapi will transfer the dash from - to _
-    response = requests.get("https://iiif.wellcomecollection.org/image/L0033046/full/400,/0/default.jpg")
+    response = requests.get(image_url)
     image = Image.open(BytesIO(response.content)) #how is the image encoded?
 
     rgblist = [] #the variable name is gray. Is it necessary to declare the variable before use?
