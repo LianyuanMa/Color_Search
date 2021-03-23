@@ -23,6 +23,7 @@ xmlhttp.onreadystatechange=function()
     {
     document.getElementById("demo").innerHTML=xmlhttp.response;
     document.getElementById("imgshow").src =document.getElementById("url").value;
+    document.getElementById("header").innerHTML =xmlhttp.responseText;
     }
   }
 xmlhttp.open("GET","/image/rgbdata/",true);
@@ -39,7 +40,7 @@ xmlhttp.send();
 
 <button type="button" onclick="sendrequest()">try</button>
 <img id="imgshow" />
-<textarea rows="3" cols="20">
+<textarea rows="3" cols="20" id="header">
 {{test}}
 </textarea>
 </body>
