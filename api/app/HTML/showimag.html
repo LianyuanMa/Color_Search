@@ -22,8 +22,7 @@ xmlhttp.onreadystatechange=function()
   if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
     document.getElementById("demo").innerHTML=xmlhttp.response;
-    obj = JSON.parse(xmlhttp.responseText);
-    document.getElementById("imgshow").src =obj.image_url;
+    document.getElementById("imgshow").src =document.getElementById("url").value;
     }
   }
 xmlhttp.open("GET","/image/rgbdata/",true);

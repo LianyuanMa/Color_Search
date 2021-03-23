@@ -21,26 +21,19 @@ def root(request: Request):
 def url_post(request: Request):
     return templates.TemplateResponse("showimag.html", {"request": request,"test":request.headers}) #the HTML file can send requests with image url in the headers. using XMLHttpRequests
 
+def extract_colour(image): #split the image into three: red, green, blue. Then merge the color histogram in a dictionary of lists which have int elements.
+    rgbdict = {}
+    for colour, colour_name in zip(image.split(), ["red", "green", "blue"]): #We need to zip the two lists, otherwise the for loop will regard the two lists as two elements of a new list.
+        n,bins = np.histogram(colour, bins=256)  # the return value bins is the width list of columns(from 0 to 256-1). We still need a sorted list.
+        int_list_n = [int(i) for i in n]    #n is in numpy.ndarrrary type. Zipping the two list will have elements as numpy.int64, which can not be transfered into json. Variable type conversion is required.
+        rgbdict[colour_name] = dict(zip(range(256), int_list_n)) 
+    return rgbdict
+
 @app.get("/image/rgbdata/")
 async def read_items(image_url: Optional[str] = Header(None)): #fastapi will transfer the dash from - to _
-    response = requests.get(image_url)
-    image = Image.open(BytesIO(response.content)) #how is the image encoded?
+    response = requests.get(image_url) #send get request to the image_url
+    image = Image.open(BytesIO(response.content))
 
-    rgblist = [] #the variable name is gray. Is it necessary to declare the variable before use?
-    rgblist = image.split();
+    rgbdict = extract_colour(image)
 
-    rgbdict = {}
-    sortedarrary = [x for x in range(256)] #used for zipping 2 lists. A waste of storage space?
-    signlist = ['red', 'green', 'blue'] #used for naming the list elements. Also a waste?
-
-    for counter in range(3):
-        n, bins, patches = plt.hist(np.array(rgblist[counter]).flatten(), bins=256, facecolor='green', alpha=0.75)
-        ln = n.tolist()
-        iln = [int(i) for i in ln] #transfer the element type from float to int
-        single_color_dict = dict(zip(sortedarrary, iln))
-        # rjson = json.dumps(single_color_dict)
-        rgbdict[signlist[counter]] = single_color_dict
-
-    rgbjson = json.dumps(rgbdict)  # what's the difference between json and dictionary?
-
-    return {"image_url": image_url,"rgbjson": rgbjson} #why cant i return image_url with request.headers.image_url or image-url?
+    return rgbdict
