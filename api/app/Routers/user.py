@@ -15,3 +15,7 @@ def root(request: Request):
 @router.get("/image/")
 def url_post(request: Request):
     return templates.TemplateResponse("showimag.html", {"request": request,"test":request.headers}) #the HTML file can send requests with image url in the headers. using XMLHttpRequests
+
+@router.get("/cluster/")
+def url_post(request: Request):
+    return templates.TemplateResponse("cluster.html", {"request": request,"test":request.headers}) #the HTML file can send requests with image url in the headers. using XMLHttpRequests

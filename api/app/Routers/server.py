@@ -71,13 +71,14 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
     img = np.array(imgpil)
 
     max_score = -1000
-    for k in range(2, 11):
+    for k in range(3, 11):
         pixel_label, label_value, label_count, rgb_array, ch_score = Kmeans_cluster(img, k)
         if max_score < ch_score:
             max_score = ch_score
             best_k = k
             best_centers = rgb_array
-
-    return best_k, best_centers
+    center_list = best_centers.tolist()
+    print(type(center_list))
+    return center_list
 
 
