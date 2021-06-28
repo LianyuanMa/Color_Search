@@ -7,7 +7,6 @@ import numpy as np
 import cv2
 from sklearn.cluster import KMeans
 from PIL import Image
-from pylab import *
 from sklearn import metrics
 
 
