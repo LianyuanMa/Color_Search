@@ -41,6 +41,17 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms3g -Xmx3g
 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.2
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+
   process_images:
     build: process_images
     depends_on:
