@@ -5,6 +5,8 @@ services:
     build: api
     ports:
       - "80:80"
+    networks:
+      - api
 
   jupyter:
     build:
@@ -39,6 +41,15 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms3g -Xmx3g
 
+  process_images:
+    build: process_images
+    depends_on:
+      - elasticsearch
+      - api
+    networks:
+      - elasticsearch
+      - api
+
 networks:
   elasticsearch:
-    driver: bridge
+  api:
