@@ -5,3 +5,40 @@ services:
     build: api
     ports:
       - "80:80"
+
+  jupyter:
+    build:
+      context: .
+      dockerfile: jupyter/Dockerfile
+    ports:
+      - 8888:8888
+    volumes:
+      - type: bind
+        source: $PWD/jupyter/notebooks
+        target: /home/jovyan/notebooks
+    env_file: .env
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    depends_on:
+      - elasticsearch
+    networks:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    networks:
+      - elasticsearch
+    volumes:
+      - type: bind
+        source: $PWD/data/elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    env_file: .env
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms3g -Xmx3g
+
+networks:
+  elasticsearch:
+    driver: bridge
