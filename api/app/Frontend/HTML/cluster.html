@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<script >
+function sendrequest()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("demo").innerHTML=xmlhttp.response;
+    document.getElementById("imgshow").src =document.getElementById("url").value;
+    document.getElementById("header").innerHTML =xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET","/image/cluster/",true);
+xmlhttp.setRequestHeader("image-url",document.getElementById("url").value);
+xmlhttp.send();
+}
+
+</script>
+
+<body>
+<p id="demo">here's the image url</p>
+<input id="url" type="text" name="image_url" value="https://iiif.wellcomecollection.org/image/L0033046/full/400,/0/default.jpg"><br>
+<h1>click to show image</h1>
+
+<button type="button" onclick="sendrequest()">try</button>
+<img id="imgshow" />
+<textarea rows="3" cols="20" id="header">
+{{test}}
+</textarea>
+</body>
+</html>
