@@ -28,7 +28,7 @@ def Extracting_url_ID(response):  # run through each page and get the url
 
 def clustering_api_request(image_url): #send request to clustering API
     header = {'image-url': image_url}
-    response = requests.get('http://localhost/image/cluster/', headers = header)
+    response = requests.get('http://api:80/image/cluster/', headers = header)
     dr = json.loads(response.text)
     return dr['center_list'], dr['center_number']
 
@@ -41,7 +41,7 @@ def index_traversing(es_object, size, index_name):
             "size": size,
             "from": 0,
             "sort": {
-                "_id": "asc",  # document ID.
+                "_id": "desc",  # document ID.
             },
         }
     )
