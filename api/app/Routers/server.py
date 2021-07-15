@@ -77,7 +77,6 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
             best_k = k
             best_centers = rgb_array
     center_list = best_centers.tolist()
-    print(type(center_list))
-    return center_list
+    return {'center_list': center_list, 'center_number': best_k}
 
 
