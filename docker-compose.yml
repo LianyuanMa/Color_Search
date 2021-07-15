@@ -60,7 +60,6 @@ services:
     networks:
       - elasticsearch
       - api
-    env_file: .env
 
 networks:
   elasticsearch:
