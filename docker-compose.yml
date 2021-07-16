@@ -23,8 +23,10 @@ services:
       - JUPYTER_ENABLE_LAB=yes
     depends_on:
       - elasticsearch
+      - api
     networks:
       - elasticsearch
+      - api
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
