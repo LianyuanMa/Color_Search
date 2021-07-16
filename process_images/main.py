@@ -1,17 +1,24 @@
+import time
 import os
 from elasticsearch import Elasticsearch
 import requests
 from piffle.iiif import IIIFImageClient
 import json
 
-# connect to ElasticSearch
-local_es = Elasticsearch(
-    hosts=os.environ['LOCAL_HOST'],
-    http_auth=(
-        os.environ['LOCAL_USER'],
-        os.environ['LOCAL_PASS']
+def create_es_client():
+    es = Elasticsearch(
+        hosts=os.environ['LOCAL_HOST'],
+        http_auth=(
+            os.environ['LOCAL_USER'],
+            os.environ['LOCAL_PASS']
+        )
     )
-)
+    accepting_connections = es.ping()
+    while not accepting_connections:
+        time.sleep(1)
+        accepting_connections = es.ping()        
+    return es
+    
 
 # create a new index
 # local_es.indices.create(
@@ -32,9 +39,10 @@ def clustering_api_request(image_url): #send request to clustering API
     dr = json.loads(response.text)
     return dr['center_list'], dr['center_number']
 
-def index_traversing(es_object, size, index_name):
+def index_traversing(size, index_name):
     # run for 1 time and get a last_result
-    response = es_object.search(
+    es = create_es_client()
+    response = es.search(
         index=os.environ['INDEX_NAME'],
         body={
             "query": {"match_all": {}},
@@ -49,7 +57,7 @@ def index_traversing(es_object, size, index_name):
     for ID_url_dict in Extracting_url_ID(response):
         image_url = str(IIIFImageClient().init_from_url(ID_url_dict['url']).size(width=500))
         cluster_centers_list, cluster_number = clustering_api_request(image_url)   #this always goes wrong. Connection error.
-        es_object.index(
+        es.index(
             index=index_name,
             id=ID_url_dict['id'],
             body={
@@ -67,7 +75,7 @@ def index_traversing(es_object, size, index_name):
     counter = size  # just to make the waiting time less painful
 
     while len(response['hits']['hits']) == size:  # get in the loop!
-        response = es_object.search(
+        response = es.search(
             index=os.environ['INDEX_NAME'],
             body={
                 "query": {"match_all": {}},
@@ -82,7 +90,7 @@ def index_traversing(es_object, size, index_name):
         for ID_url_dict in Extracting_url_ID(response):  # post the dictionaries
             image_url = str(IIIFImageClient().init_from_url(ID_url_dict['url']).size(width=500))
             cluster_centers_list, cluster_number = clustering_api_request(image_url)
-            es_object.index(
+            es.index(
                 index=index_name,
                 id=ID_url_dict['id'],
                 body={
@@ -101,4 +109,4 @@ def index_traversing(es_object, size, index_name):
         print(counter)
 
 
-index_traversing(local_es, 20, index_name)
+index_traversing(20, index_name)
