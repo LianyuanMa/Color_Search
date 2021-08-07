@@ -80,6 +80,7 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
             best_lab_centers = lab_arrary
 
     center_list = best_centers.tolist()
+
     cluster_size = best_pixcount.tolist()
     lab_center_list = best_lab_centers.tolist()
     totalpix = sum(cluster_size)
@@ -88,5 +89,6 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
         pix_proportion = pix_count/totalpix
         cluster_proportion.append(pix_proportion)
     return {'center_list': center_list, 'center_number': best_k, 'cluster_size': cluster_size, 'cluster_proportion': cluster_proportion, 'lab_center_list': lab_center_list}
+
 
 
