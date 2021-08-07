@@ -50,14 +50,5 @@ services:
     depends_on:
       - elasticsearch
       - api
-<<<<<<< HEAD
     env_file: .env
-=======
-    networks:
-      - elasticsearch
-      - api
 
-networks:
-  elasticsearch:
-  api:
->>>>>>> 9d828de9944b239f842fd3f6d987d5b7ae8a7278
