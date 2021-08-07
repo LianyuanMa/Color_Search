@@ -8,7 +8,8 @@ import cv2
 from sklearn.cluster import KMeans
 from PIL import Image
 from sklearn import metrics
-
+import math
+import collections
 
 router = APIRouter()
 
@@ -90,5 +91,29 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
         cluster_proportion.append(pix_proportion)
     return {'center_list': center_list, 'center_number': best_k, 'cluster_size': cluster_size, 'cluster_proportion': cluster_proportion, 'lab_center_list': lab_center_list}
 
+def color_space_divide(img_arrary, k=3):
+    img = img_arrary
+    data = cv2.cvtColor(img, cv2.COLOR_RGB2LAB) #lab space
+    data = data.reshape((-1, 3))  # n*3 matrix
+    colorstr_list = []
+    for point in data:
+        R = str(math.floor(point[0] *10/256)).zfill(2)
+        G = str(math.floor(point[1] / 16)).zfill(2)
+        B = str(math.floor(point[2] / 16)).zfill(2)
+        colorstr = R + G + B
+        colorstr_list.append(colorstr)
 
+    pixel_count = collections.Counter(colorstr_list)
+    most_common_chunk = pixel_count.most_common(k)
+    return most_common_chunk
+
+@router.get("/image/spacedivide/")
+async def read_items(image_url: Optional[str] = Header(None), k:Optional[str] = Header(None)): #fastapi will transfer the dash from - to _
+    k = int(k)
+    response = requests.get(image_url)  # send get request to the image_url
+    imgpil = Image.open(BytesIO(response.content))
+    img = np.array(imgpil)
+    most_common_chunk = color_space_divide(img,k)
+    most_common_chunk_dict = dict(most_common_chunk)
+    return most_common_chunk_dict
 
