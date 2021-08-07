@@ -5,8 +5,6 @@ services:
     build: api
     ports:
       - "80:80"
-    networks:
-      - api
 
   jupyter:
     build:
@@ -23,13 +21,10 @@ services:
       - JUPYTER_ENABLE_LAB=yes
     depends_on:
       - elasticsearch
-    networks:
-      - elasticsearch
+      - api
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-    networks:
-      - elasticsearch
     volumes:
       - type: bind
         source: ./data/elasticsearch
@@ -47,8 +42,6 @@ services:
       - elasticsearch
     ports:
       - 5601:5601
-    networks:
-      - elasticsearch
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
@@ -57,10 +50,4 @@ services:
     depends_on:
       - elasticsearch
       - api
-    networks:
-      - elasticsearch
-      - api
-
-networks:
-  elasticsearch:
-  api:
+    env_file: .env

@@ -38,7 +38,7 @@ def Kmeans_cluster(img_arrary, k=3):
 
     :param img_file: image file location
     :param k: number of clusters
-    :return: clustering result, cluster labels, pixel numbers, RGB cluster center, clustering score
+    :return: clustering result, cluster labels, pixel numbers, RGB cluster centers list, clustering score, LAB cluster centers list
     """
     img = img_arrary  # RGB form
     data = cv2.cvtColor(img, cv2.COLOR_RGB2LAB) # LAB form.
@@ -56,11 +56,11 @@ def Kmeans_cluster(img_arrary, k=3):
     cluster_centers_array = cluster_centers_array.astype(np.uint8)
     rgb_array = cv2.cvtColor(cluster_centers_array, cv2.COLOR_LAB2RGB)
     rgb_array = np.reshape(rgb_array, (k, 3))
-
+    lab_array = np.reshape(cluster_centers_array, (k, 3))
     # Calinski-Harabasz score
     ch_score = metrics.calinski_harabasz_score(data, pixel_label)
 
-    return pixel_label, np.array(list(label_value)), np.array(label_count), rgb_array, ch_score
+    return pixel_label, np.array(list(label_value)), np.array(label_count), rgb_array, ch_score, lab_array
 
 
 @router.get("/image/cluster/")
@@ -70,14 +70,23 @@ async def read_items(image_url: Optional[str] = Header(None)): #fastapi will tra
     img = np.array(imgpil)
 
     max_score = -1000
-    for k in range(3, 11):
-        pixel_label, label_value, label_count, rgb_array, ch_score = Kmeans_cluster(img, k)
+    for k in range(3, 5):
+        pixel_label, label_value, label_count, rgb_array, ch_score, lab_arrary = Kmeans_cluster(img, k)
         if max_score < ch_score:
             max_score = ch_score
             best_k = k
             best_centers = rgb_array
+            best_pixcount = label_count
+            best_lab_centers = lab_arrary
+
     center_list = best_centers.tolist()
-    print(type(center_list))
-    return center_list
+    cluster_size = best_pixcount.tolist()
+    lab_center_list = best_lab_centers.tolist()
+    totalpix = sum(cluster_size)
+    cluster_proportion = []
+    for pix_count in cluster_size:
+        pix_proportion = pix_count/totalpix
+        cluster_proportion.append(pix_proportion)
+    return {'center_list': center_list, 'center_number': best_k, 'cluster_size': cluster_size, 'cluster_proportion': cluster_proportion, 'lab_center_list': lab_center_list}
 
 
