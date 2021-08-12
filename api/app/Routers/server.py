@@ -97,10 +97,10 @@ def color_space_divide(img_arrary, k=3):
     data = data.reshape((-1, 3))  # n*3 matrix
     colorstr_list = []
     for point in data:
-        R = str(math.floor(point[0] *10/256)).zfill(2)
-        G = str(math.floor(point[1] / 16)).zfill(2)
+        L = str(math.floor(point[0] *10/256)).zfill(2)
+        A = str(math.floor(point[1] / 16)).zfill(2)
         B = str(math.floor(point[2] / 16)).zfill(2)
-        colorstr = R + G + B
+        colorstr = L + A + B
         colorstr_list.append(colorstr)
 
     pixel_count = collections.Counter(colorstr_list)
